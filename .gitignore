@@ -1,6 +1,9 @@
 ## Ignore Visual Studio temporary files, build results, and
 ## user-specific files
 
+# Project files and folders
+Temp/
+
 # Build results
 [Bb]in/
 [Oo]bj/

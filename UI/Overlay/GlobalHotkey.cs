@@ -9,6 +9,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 
 namespace SudokuSniper.UI.Overlay
@@ -16,6 +17,7 @@ namespace SudokuSniper.UI.Overlay
     /// <summary>
     /// Handles registration and monitoring of a global hotkey (Ctrl + Shift + Z).
     /// </summary>
+    [SupportedOSPlatform("windows6.1")]
     public class GlobalHotkey : IDisposable
     {
         private const int WM_HOTKEY = 0x0312;
@@ -29,7 +31,9 @@ namespace SudokuSniper.UI.Overlay
 
         private readonly Form _listeningForm;
 
+#nullable enable
         public event Action? HotkeyPressed;
+#nullable disable
 
         public GlobalHotkey()
         {

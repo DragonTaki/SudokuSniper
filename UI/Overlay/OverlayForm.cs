@@ -9,6 +9,7 @@
 
 using System;
 using System.Drawing;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 
 namespace SudokuSniper.UI.Overlay
@@ -16,13 +17,16 @@ namespace SudokuSniper.UI.Overlay
     /// <summary>
     /// Transparent fullscreen overlay for selecting screen region.
     /// </summary>
+    [SupportedOSPlatform("windows6.1")]
     public class OverlayForm : Form
     {
         private Point _startPoint;
         private Rectangle _selection;
         private bool _selecting = false;
 
+#nullable enable
         public event Action<Rectangle>? SelectionMade;
+#nullable disable
 
         public OverlayForm()
         {
@@ -41,21 +45,27 @@ namespace SudokuSniper.UI.Overlay
             Paint += OnPaint;
         }
 
+#nullable enable
         private void OnMouseDown(object? sender, MouseEventArgs e)
+#nullable disable
         {
             if (e.Button != MouseButtons.Left) return;
             _startPoint = e.Location;
             _selecting = true;
         }
 
+#nullable enable
         private void OnMouseMove(object? sender, MouseEventArgs e)
+#nullable disable
         {
             if (!_selecting) return;
             _selection = GetRectangle(_startPoint, e.Location);
             Invalidate();
         }
 
+#nullable enable
         private void OnMouseUp(object? sender, MouseEventArgs e)
+#nullable disable
         {
             if (!_selecting) return;
             _selecting = false;
@@ -65,7 +75,9 @@ namespace SudokuSniper.UI.Overlay
             SelectionMade?.Invoke(_selection);
         }
 
+#nullable enable
         private void OnPaint(object? sender, PaintEventArgs e)
+#nullable disable
         {
             if (_selecting)
             {

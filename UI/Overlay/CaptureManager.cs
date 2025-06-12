@@ -11,13 +11,17 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
+using SudokuSniper.Shared;
+using SudokuSniper.UI.Interop;
 
 namespace SudokuSniper.UI.Overlay
 {
     /// <summary>
     /// Controls capture workflow: user selects region, screenshot is saved to file.
     /// </summary>
+    [SupportedOSPlatform("windows6.1")]
     public class CaptureManager
     {
         private readonly OverlayForm _overlayForm;
@@ -41,12 +45,18 @@ namespace SudokuSniper.UI.Overlay
             using Graphics g = Graphics.FromImage(bmp);
             g.CopyFromScreen(region.Location, Point.Empty, region.Size);
 
-            string folder = Path.Combine(AppContext.BaseDirectory, "Temp");
-            Directory.CreateDirectory(folder);
-            string path = Path.Combine(folder, "capture.png");
-
+            string path = PathHelper.GetCaptureImagePath();
+            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             bmp.Save(path, ImageFormat.Png);
-            MessageBox.Show($"Saved to {path}", "Capture Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            //MessageBox.Show($"Saved to {path}", "Capture Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        public string AnalyzeLastCapture()
+        {
+            string imagePath = PathHelper.GetCaptureImagePath();
+            string workingDir = PathHelper.GetCurrentPath();
+            return PythonInterop.RunScript("python", $"-m Analyzer \"{imagePath}\"", workingDir);
         }
     }
 }

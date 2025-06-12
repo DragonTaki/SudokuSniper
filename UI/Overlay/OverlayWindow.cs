@@ -9,6 +9,7 @@
 
 using System;
 using System.Drawing;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 
 namespace SudokuSniper.UI.Overlay
@@ -16,6 +17,7 @@ namespace SudokuSniper.UI.Overlay
     /// <summary>
     /// 懸浮視窗（可縮小、移動、半透明）
     /// </summary>
+    [SupportedOSPlatform("windows6.1")]
     public class OverlayWindow : Form
     {
         public OverlayWindow()
@@ -27,7 +29,7 @@ namespace SudokuSniper.UI.Overlay
             Opacity = 0.85;
             Size = new Size(300, 300);
             StartPosition = FormStartPosition.Manual;
-            Location = new Point(Screen.PrimaryScreen.WorkingArea.Width - 320, 100);
+            Location = new Point(Screen.PrimaryScreen.WorkingArea.Width - 320, 200);
 
             MouseDown += (s, e) => dragStart = e.Location;
             MouseMove += OnDragMove;

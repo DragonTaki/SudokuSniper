@@ -36,6 +36,8 @@ namespace SudokuSniper.UI
 
             // Create a system tray controller
             using var tray = new TrayController();
+            tray.ScreenshotRequested += () => captureManager.StartCapture();
+            tray.ReanalyzeRequested += () => captureManager.AnalyzeLastCapture();
 
             // Create a floating window (initially hidden)
             var overlay = new OverlayWindow();
