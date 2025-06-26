@@ -10,9 +10,11 @@
 import os
 import sys
 import json
+from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(__file__))
 from analyzer import analyze_image
+from debug_utils import create_debug_folder
 
 def main():
     if len(sys.argv) != 2:
@@ -20,11 +22,17 @@ def main():
         return
 
     image_path = sys.argv[1]
+    base_debug_dir = (Path(__file__).resolve().parent.parent / "Temp")
+    debug_dir = create_debug_folder(base_debug_dir)
+
     try:
-        result = analyze_image(image_path)
+        result = analyze_image(image_path, debug_dir=debug_dir)
+        result["debug_folder"] = os.path.abspath(debug_dir)
         print(json.dumps(result))
     except Exception as e:
         print(json.dumps({"error": str(e)}))
 
 if __name__ == "__main__":
+    test_image_path = (Path(__file__).resolve().parent.parent / "Temp" / "capture.png")
+    sys.argv = [sys.argv[0], test_image_path]
     main()

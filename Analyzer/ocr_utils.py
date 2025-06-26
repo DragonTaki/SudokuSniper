@@ -3,37 +3,43 @@
 # Do not distribute or modify
 # Author: DragonTaki (https://github.com/DragonTaki)
 # Create Date: 2025/06/12
-# Update Date: 2025/06/12
-# Version: v1.0
+# Update Date: 2025/06/26
+# Version: v1.1
 # ----- ----- ----- -----
 
 import pytesseract
 import cv2
+from pathlib import Path
 
-def recognize_digits(grid_image):
-    # 分割為 9x9 格子
-    h, w = grid_image.shape[:2]
-    cell_h, cell_w = h // 9, w // 9
+tesseract_path = (
+    Path(__file__).resolve().parent.parent / "Third-Party" / "Tesseract" / "tesseract.exe"
+)
+pytesseract.pytesseract.tesseract_cmd = str(tesseract_path)
+
+def recognize_digits_from_files(cell_paths_2d):
     board = []
 
-    for i in range(9):
-        row = []
-        for j in range(9):
-            cell = grid_image[i*cell_h:(i+1)*cell_h, j*cell_w:(j+1)*cell_w]
-            digit = extract_digit(cell)
-            row.append(digit)
-        board.append(row)
+    for row_paths in cell_paths_2d:
+        row_digits = []
+        for cell_path in row_paths:
+            digit = extract_digit_from_file(cell_path)
+            row_digits.append(digit)
+        board.append(row_digits)
+
     return board
 
-def extract_digit(cell_img):
-    gray = cv2.cvtColor(cell_img, cv2.COLOR_BGR2GRAY)
+def extract_digit_from_file(image_path):
+    img = cv2.imread(image_path)
+    if img is None:
+        return 0
+
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     _, thresh = cv2.threshold(gray, 128, 255, cv2.THRESH_BINARY_INV)
     cnts, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     if len(cnts) == 0:
         return 0
 
-    # 使用 pytesseract 辨識
     text = pytesseract.image_to_string(gray, config='--psm 10 digits')
     try:
         return int(text.strip())

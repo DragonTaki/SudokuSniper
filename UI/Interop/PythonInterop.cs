@@ -46,6 +46,9 @@ namespace SudokuSniper.UI.Interop
             string error = process.StandardError.ReadToEnd();
             process.WaitForExit();
 
+            Console.WriteLine(output);
+            Console.WriteLine(error);
+            
             if (process.ExitCode != 0)
                 throw new Exception($"Python error: {error}");
 
